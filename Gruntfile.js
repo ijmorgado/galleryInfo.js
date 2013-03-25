@@ -16,7 +16,7 @@ module.exports = function(grunt) {
     banner: [
       '/*!',
       ' * galleryInfo.js <%= version %>',
-      ' * https://github.com/ijmorgado/galleryInfo',
+      ' * https://github.com/ijmorgado/galleryInfo.js',
       ' */\n\n'
     ].join('\n'),
 
