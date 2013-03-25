@@ -5,21 +5,20 @@
 			  if (this.length === 0) {
 		        $.error('galleryInfo initialized without DOM element');
 		      }
-		      if(options.backdrop && options.backdrop.footerTemplate && !options.engine){
-		      	$.error('No template engine defined.');	
-		      }
 		      var settings = $.extend( { 'infoPosition' : 'left',
-		      							 'backdrop': {
-		      							 	'opacity' : 1
-		      							 }
-		      							 
+		      							 'backdropOpacity': 1,
+		      							 'footerContent': null
 									    }, options);
-		      _createBackdrop(settings.backdrop,settings.engine);
+		      _createBackdrop(settings.backdropOpacity,settings.footerContent);
+		      _createModalGallery();
 		      return this.each(initialize);
 		      function initialize(){
 		      }
-		      function _createBackdrop(bdOptions,engine){
-				new Backdrop(bdOptions,engine);
+		      function _createModalGallery(){
+				new Modal_View();
+		      }
+		      function _createBackdrop(opacity,footer){
+				new Backdrop(opacity, footer);
 			  }
 		},
 		destroy: function(){

@@ -27,30 +27,23 @@ var Backdrop = (function(){
 
 		}
 	};
-	function Backdrop(settings,engine){
-		css.wrapper.opacity = settings.opacity;
+	function Backdrop(opacity, footer){
+		css.wrapper.opacity = opacity;
 		$backdrop = $(html.wrapper).css(css.wrapper);
 		$footer = $(html.footer).css(css.footer);
-		if(settings.footerTemplate){
-			console.log("inside");
-			this._createFooterTemplate($footer,settings.footerTemplate,engine);	
+		if(footer){
+			this._createFooterTemplate(footer);	
 		}
 		$backdrop.append($footer);
 		$("body").append($backdrop);
 	}
 	$.extend(Backdrop.prototype,{
-		_createFooterTemplate: function($wrapper,template,engine){
-			if (template) {
-      			compiledTemplate = engine.compile(template);
+		_createFooterTemplate: function(footer){
+			if (typeof footer === 'string') {
+      			$footer.html(footer);
+    		}else{
+    			$footer.append(footer);
     		}
-    		else {
-      			compiledTemplate = {
-      								  render: function() {
-							          				return '';
-							        			}
-      							};
-    		}
-    		$wrapper.append(compiledTemplate.render());
 		}
 	});
 	return Backdrop;

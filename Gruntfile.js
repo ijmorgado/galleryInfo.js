@@ -3,6 +3,7 @@ var semver = require('semver'),
     jsFiles = [
       'src/version.js',
       'src/backdrop_view.js',
+      'src/modal_view.js',
       'src/galleryInfo.js'
     ];
 
@@ -87,7 +88,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', 'build');
   grunt.registerTask('build', ['concat:js', 'concat:jsmin', 'sed:version', 'uglify']);
-  grunt.registerTask('server', 'connect:server');
   grunt.registerTask('lint', 'jshint');
 
   // load tasks
@@ -99,5 +99,4 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-connect');
 };

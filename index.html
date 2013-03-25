@@ -74,16 +74,13 @@
 		<script type="text/javascript">
 			$(document).ready(function(){
 				$(".gi-ImageItem").galleryInfo({
-					engine: Hogan,
-					backdrop: {
-						footerTemplate: ['<div>',
+						footerContent: ['<div>',
 											'<div class="ui-optionsLeft">',
 												'<div class="ui-optionBtn">Go to</div>',
 												'<div class="ui-optionBtn">Presentation</div>',
 												'<div id="ui-textBottom">MyFirstImageSample.png</div>',
 											'</div>',
 										'</div>'].join('')
-					}
 				});
 			});
 		</script>
