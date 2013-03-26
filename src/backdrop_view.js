@@ -36,6 +36,7 @@ var Backdrop = (function(){
 		}
 		$backdrop.append($footer);
 		$("body").append($backdrop);
+		new Modal_View();
 	}
 	$.extend(Backdrop.prototype,{
 		_createFooterTemplate: function(footer){

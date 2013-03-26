@@ -10,12 +10,8 @@
 		      							 'footerContent': null
 									    }, options);
 		      _createBackdrop(settings.backdropOpacity,settings.footerContent);
-		      _createModalGallery();
 		      return this.each(initialize);
 		      function initialize(){
-		      }
-		      function _createModalGallery(){
-				new Modal_View();
 		      }
 		      function _createBackdrop(opacity,footer){
 				new Backdrop(opacity, footer);
