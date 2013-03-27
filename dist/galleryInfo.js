@@ -19,7 +19,8 @@
                 position: "fixed",
                 right: "0",
                 top: "0",
-                zIndex: "1099"
+                zIndex: "1099",
+                display: "none"
             },
             footer: {
                 background: "#0a0a0a",
@@ -32,16 +33,16 @@
                 zIndex: "110"
             }
         };
-        function Backdrop(opacity, footer) {
+        function Backdrop(opacity, footer, uniqueID) {
             css.wrapper.opacity = opacity;
-            $backdrop = $(html.wrapper).css(css.wrapper);
+            $backdrop = $(html.wrapper).css(css.wrapper).attr("id", "ui-giModal" + uniqueID);
             $footer = $(html.footer).css(css.footer);
             if (footer) {
                 this._createFooterTemplate(footer);
             }
             $backdrop.append($footer);
             $("body").append($backdrop);
-            new Modal_View();
+            new Modal_View(uniqueID);
         }
         $.extend(Backdrop.prototype, {
             _createFooterTemplate: function(footer) {
@@ -56,12 +57,12 @@
     }();
     var Modal_View = function() {
         var html = {
-            wrapperGallery: '<div id="ui-giModalGallery"></div>',
-            imageDiv: '<div id="ui-giImageDiv"></div>',
-            infoDiv: '<div id="ui-giInfoDiv"></div>',
-            leftCtrl: '<div class="ui-giCtrl" id="ui-giCtrlleft"></div>',
-            rightCtrl: '<div class="ui-giCtrl" id="ui-giCtrlRight"></div>',
-            closeCtrl: '<span class="ui-giCtrl" id="ui-giCloseGallery"></span>'
+            wrapperGallery: '<div class="ui-giModalGallery"></div>',
+            imageDiv: '<div class="ui-giImageDiv"></div>',
+            infoDiv: '<div class="ui-giInfoDiv"></div>',
+            leftCtrl: '<div class="ui-giCtrl ui-giCtrlleft"></div>',
+            rightCtrl: '<div class="ui-giCtrl ui-giCtrlRight"></div>',
+            closeCtrl: '<span class="ui-giCtrl ui-giCloseGallery"></span>'
         };
         var css = {
             wrapperGallery: {
@@ -130,7 +131,7 @@
                 background: "url(dist/img/controls.png) 0px 0px"
             }
         };
-        function Modal_View() {
+        function Modal_View(uniqueID) {
             this._setDimensions();
             this._setStyle();
             this._createControls();
@@ -139,7 +140,10 @@
             $wrapper.append($infoDiv);
             $("div.ui-giBackdrop").append($wrapper);
             $(window).on("resize.gi-gallery", this._adjustToViewPort);
-            $(".ui-giCtrl").on("mouseenter.gi-gallery mouseleave.gi-gallery", this._hoverControls);
+            $("#ui-giModal" + uniqueID).on("mouseenter.gi-gallery mouseleave.gi-gallery", ".ui-giCtrl", this._hoverControls);
+            $("#ui-giModal" + uniqueID).on("click.gi-gallery", ".ui-giCloseGallery", {
+                uniqueID: uniqueID
+            }, this._hideModal);
         }
         $.extend(Modal_View.prototype, {
             _setDimensions: function() {
@@ -159,11 +163,11 @@
                 $infoDiv = $(html.infoDiv).css(css.infoDiv);
             },
             _updateStyle: function() {
-                $("div#ui-giModalGallery").css(css.wrapperGallery);
-                $("div#ui-giImageDiv").css(css.imageDiv);
-                $("div#ui-giInfoDiv").css(css.infoDiv);
-                $("div#ui-giCtrlleft").css(css.leftCtrl);
-                $("div#ui-giCtrlRight").css(css.rightCtrl);
+                $("div.ui-giModalGallery").css(css.wrapperGallery);
+                $("div.ui-giImageDiv").css(css.imageDiv);
+                $("div.ui-giInfoDiv").css(css.infoDiv);
+                $("div.ui-giCtrlleft").css(css.leftCtrl);
+                $("div.ui-giCtrlRight").css(css.rightCtrl);
             },
             _createControls: function() {
                 $spanArrowLeft = $(document.createElement("span")).css(css.arrowLeft);
@@ -178,10 +182,13 @@
             },
             _hoverControls: function(e) {
                 if (e.type === "mouseenter") {
-                    if ($(this).attr("id") === "ui-giCloseGallery") $(this).css(css.closeCtrlHover); else if ($(this).attr("id") === "ui-giCtrlleft") $(this).children("span").css(css.arrowLeftHover); else $(this).children("span").css(css.arrowRightHover);
+                    if ($(this).hasClass("ui-giCloseGallery")) $(this).css(css.closeCtrlHover); else if ($(this).hasClass("ui-giCtrlleft")) $(this).children("span").css(css.arrowLeftHover); else $(this).children("span").css(css.arrowRightHover);
                 } else {
-                    if ($(this).attr("id") === "ui-giCloseGallery") $(this).css(css.closeCtrl); else if ($(this).attr("id") === "ui-giCtrlleft") $(this).children("span").css(css.arrowLeft); else $(this).children("span").css(css.arrowRight);
+                    if ($(this).hasClass("ui-giCloseGallery")) $(this).css(css.closeCtrl); else if ($(this).hasClass("ui-giCtrlleft")) $(this).children("span").css(css.arrowLeft); else $(this).children("span").css(css.arrowRight);
                 }
+            },
+            _hideModal: function(e) {
+                $("#ui-giModal" + e.data.uniqueID).fadeOut(200);
             }
         });
         return Modal_View;
@@ -189,6 +196,7 @@
     (function() {
         var methods = {
             initialize: function(options) {
+                var $that = $(this);
                 if (this.length === 0) {
                     $.error("galleryInfo initialized without DOM element");
                 }
@@ -196,12 +204,24 @@
                     infoPosition: "left",
                     backdropOpacity: 1,
                     footerContent: null
-                }, options);
-                _createBackdrop(settings.backdropOpacity, settings.footerContent);
-                return this.each(initialize);
-                function initialize() {}
-                function _createBackdrop(opacity, footer) {
-                    new Backdrop(opacity, footer);
+                }, options), time = new Date().getTime();
+                if (!$("#ui-giModal" + time).length) {
+                    _createBackdrop(settings.backdropOpacity, settings.footerContent, time);
+                }
+                return $(this).children(".ui-giItem").each(initialize);
+                function initialize() {
+                    $galleryItem = $(this);
+                    $that.on("click.gi-gallery", ".ui-giItem", _openGallery);
+                }
+                function _createBackdrop(opacity, footer, time) {
+                    new Backdrop(opacity, footer, time);
+                }
+                function _openGallery(e) {
+                    e.preventDefault();
+                    $gallery = $("#ui-giModal" + time);
+                    if ($gallery.length) {
+                        $gallery.show();
+                    }
                 }
             },
             destroy: function() {}

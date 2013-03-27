@@ -2,19 +2,31 @@
 (function(){
 	var methods = {
 		initialize: function(options){
+			var $that = $(this);
 			  if (this.length === 0) {
 		        $.error('galleryInfo initialized without DOM element');
 		      }
 		      var settings = $.extend( { 'infoPosition' : 'left',
 		      							 'backdropOpacity': 1,
 		      							 'footerContent': null
-									    }, options);
-		      _createBackdrop(settings.backdropOpacity,settings.footerContent);
-		      return this.each(initialize);
-		      function initialize(){
+									    }, options),time = new Date().getTime();
+		      if(!$('#ui-giModal'+time).length){
+				_createBackdrop(settings.backdropOpacity,settings.footerContent,time);
 		      }
-		      function _createBackdrop(opacity,footer){
-				new Backdrop(opacity, footer);
+		      return $(this).children('.ui-giItem').each(initialize);
+		      function initialize(){
+		      	$galleryItem = $(this);
+		      	$that.on('click.gi-gallery','.ui-giItem',_openGallery);
+		      }
+		      function _createBackdrop(opacity,footer,time){
+				new Backdrop(opacity,footer,time);
+			  }
+			  function _openGallery(e){
+			  	e.preventDefault();
+			  	$gallery = $('#ui-giModal'+time);
+			  	if($gallery.length){
+			  		$gallery.show();
+			  	}
 			  }
 		},
 		destroy: function(){

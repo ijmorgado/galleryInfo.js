@@ -2,7 +2,6 @@
 <html>
 	<head>
 		<script type="text/javascript" src="components/jquery/jquery.min.js"></script>
-		<script type="text/javascript" src="components/hogan/web/builds/2.0.0/hogan-2.0.0.min.js"></script>
 		<script type="text/javascript" src="dist/galleryInfo.js"></script>
 		<style type="text/css">
 			.ui-optionsLeft{
@@ -67,21 +66,30 @@
 		</style>
 	</head>
 	<body>
+		gallery 1
 		<div class="ui-gallery">
-			<a class="gi-ImageItem" href="">imagen 1</a>
-			<a class="gi-ImageItem" href="">imagen 2</a>
+			<a class="ui-giItem" href="">imagen 1</a>
+			<a class="ui-giItem" href="">imagen 2</a>
+		</div>
+		<br />
+		gallery 2
+		<br />
+		<div class="ui-gallery2">
+			<a class="ui-giItem" href="">imagen 3</a>
+			<a class="ui-giItem" href="">imagen 4</a>
 		</div>
 		<script type="text/javascript">
 			$(document).ready(function(){
-				$(".gi-ImageItem").galleryInfo({
-						/*footerContent: ['<div>',
+				$(".ui-gallery").galleryInfo({
+						footerContent: ['<div>',
 											'<div class="ui-optionsLeft">',
 												'<div class="ui-optionBtn">Go to</div>',
 												'<div class="ui-optionBtn">Presentation</div>',
 												'<div id="ui-textBottom">MyFirstImageSample.png</div>',
 											'</div>',
-										'</div>'].join('')*/
+										'</div>'].join('')
 				});
+				$(".ui-gallery2").galleryInfo();
 			});
 		</script>
 	</body

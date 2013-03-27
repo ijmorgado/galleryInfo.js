@@ -1,12 +1,12 @@
 
 var Modal_View = (function(){
 	var html = {
-			wrapperGallery: '<div id="ui-giModalGallery"></div>',
-			imageDiv: '<div id="ui-giImageDiv"></div>',
-			infoDiv: '<div id="ui-giInfoDiv"></div>',
-			leftCtrl: '<div class="ui-giCtrl" id="ui-giCtrlleft"></div>',
-			rightCtrl: '<div class="ui-giCtrl" id="ui-giCtrlRight"></div>',
-			closeCtrl: '<span class="ui-giCtrl" id="ui-giCloseGallery"></span>'
+			wrapperGallery: '<div class="ui-giModalGallery"></div>',
+			imageDiv: '<div class="ui-giImageDiv"></div>',
+			infoDiv: '<div class="ui-giInfoDiv"></div>',
+			leftCtrl: '<div class="ui-giCtrl ui-giCtrlleft"></div>',
+			rightCtrl: '<div class="ui-giCtrl ui-giCtrlRight"></div>',
+			closeCtrl: '<span class="ui-giCtrl ui-giCloseGallery"></span>'
 	};
 	var css = {
 		wrapperGallery: {
@@ -76,7 +76,7 @@ var Modal_View = (function(){
 		}
 	};
 
-	function Modal_View(){
+	function Modal_View(uniqueID){
 		this._setDimensions();
 		this._setStyle();
 		this._createControls();
@@ -85,7 +85,8 @@ var Modal_View = (function(){
 		$wrapper.append($infoDiv);
 		$("div.ui-giBackdrop").append($wrapper);
 		$(window).on('resize.gi-gallery',this._adjustToViewPort);
-		$(".ui-giCtrl").on('mouseenter.gi-gallery mouseleave.gi-gallery',this._hoverControls);
+		$('#ui-giModal'+uniqueID).on('mouseenter.gi-gallery mouseleave.gi-gallery',".ui-giCtrl",this._hoverControls);
+		$('#ui-giModal'+uniqueID).on('click.gi-gallery',".ui-giCloseGallery",{uniqueID: uniqueID},this._hideModal);
 	}
 	$.extend(Modal_View.prototype,{
 		_setDimensions: function(){
@@ -105,11 +106,11 @@ var Modal_View = (function(){
 			$infoDiv = $(html.infoDiv).css(css.infoDiv);
 		},
 		_updateStyle: function(){
-			$("div#ui-giModalGallery").css(css.wrapperGallery);
-			$("div#ui-giImageDiv").css(css.imageDiv);
-			$("div#ui-giInfoDiv").css(css.infoDiv);
-			$("div#ui-giCtrlleft").css(css.leftCtrl);
-			$("div#ui-giCtrlRight").css(css.rightCtrl);
+			$("div.ui-giModalGallery").css(css.wrapperGallery);
+			$("div.ui-giImageDiv").css(css.imageDiv);
+			$("div.ui-giInfoDiv").css(css.infoDiv);
+			$("div.ui-giCtrlleft").css(css.leftCtrl);
+			$("div.ui-giCtrlRight").css(css.rightCtrl);
 		},
 		_createControls: function(){
 			$spanArrowLeft = $(document.createElement('span')).css(css.arrowLeft);
@@ -124,21 +125,24 @@ var Modal_View = (function(){
 		},
 		_hoverControls: function(e){
 			if(e.type === 'mouseenter'){
-				if($(this).attr('id') === 'ui-giCloseGallery')
+				if($(this).hasClass('ui-giCloseGallery'))
 					$(this).css(css.closeCtrlHover);
-				else if($(this).attr('id') === 'ui-giCtrlleft')
+				else if($(this).hasClass('ui-giCtrlleft'))
 					$(this).children('span').css(css.arrowLeftHover);
 				else
 					$(this).children('span').css(css.arrowRightHover);	
 			}else{
-				if($(this).attr('id') === 'ui-giCloseGallery')
+				if($(this).hasClass('ui-giCloseGallery'))
 					$(this).css(css.closeCtrl);
-				else if($(this).attr('id') === 'ui-giCtrlleft')
+				else if($(this).hasClass('ui-giCtrlleft'))
 					$(this).children('span').css(css.arrowLeft);
 				else
 					$(this).children('span').css(css.arrowRight);	
 			}
 			
+		},
+		_hideModal: function(e){
+			$('#ui-giModal'+e.data.uniqueID).fadeOut(200);
 		}
 	});
 	return Modal_View;

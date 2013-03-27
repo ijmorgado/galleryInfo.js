@@ -14,7 +14,8 @@ var Backdrop = (function(){
 			position: 'fixed',
 			right: '0',
 			top: '0',
-			zIndex: '1099'
+			zIndex: '1099',
+			display: 'none'
 		},
 		footer: {	background: '#0a0a0a',
 			borderTop: '1px solid #181818',
@@ -27,16 +28,16 @@ var Backdrop = (function(){
 
 		}
 	};
-	function Backdrop(opacity, footer){
+	function Backdrop(opacity, footer,uniqueID){
 		css.wrapper.opacity = opacity;
-		$backdrop = $(html.wrapper).css(css.wrapper);
+		$backdrop = $(html.wrapper).css(css.wrapper).attr('id','ui-giModal'+uniqueID);
 		$footer = $(html.footer).css(css.footer);
 		if(footer){
 			this._createFooterTemplate(footer);	
 		}
 		$backdrop.append($footer);
 		$("body").append($backdrop);
-		new Modal_View();
+		new Modal_View(uniqueID);
 	}
 	$.extend(Backdrop.prototype,{
 		_createFooterTemplate: function(footer){
