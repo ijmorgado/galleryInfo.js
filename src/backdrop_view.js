@@ -29,6 +29,7 @@ var Backdrop = (function(){
 		}
 	};
 	function Backdrop(opacity, footer,uniqueID){
+		var modal;
 		css.wrapper.opacity = opacity;
 		$backdrop = $(html.wrapper).css(css.wrapper).attr('id','ui-giModal'+uniqueID);
 		$footer = $(html.footer).css(css.footer);
@@ -37,7 +38,7 @@ var Backdrop = (function(){
 		}
 		$backdrop.append($footer);
 		$("body").append($backdrop);
-		new Modal_View(uniqueID);
+		this.modal = new Modal_View(uniqueID);
 	}
 	$.extend(Backdrop.prototype,{
 		_createFooterTemplate: function(footer){
@@ -46,6 +47,9 @@ var Backdrop = (function(){
     		}else{
     			$footer.append(footer);
     		}
+		},
+		getModal: function(){
+			return this.modal;
 		}
 	});
 	return Backdrop;

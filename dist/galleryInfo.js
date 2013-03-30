@@ -5,6 +5,20 @@
 
 (function($) {
     var VERSION = "0.0.1";
+    var Image_Processor = function() {
+        var imgEl;
+        function Image_Processor(url, callback) {
+            this.imgEl = new Image();
+            this.imgEl.onload = callback;
+            this.imgEl.src = url;
+        }
+        $.extend(Image_Processor.prototype, {
+            getImageAsJQuery: function() {
+                return $(this.imgEl);
+            }
+        });
+        return Image_Processor;
+    }();
     var Backdrop = function() {
         var html = {
             wrapper: '<div class="ui-giBackdrop"></div>',
@@ -34,6 +48,7 @@
             }
         };
         function Backdrop(opacity, footer, uniqueID) {
+            var modal;
             css.wrapper.opacity = opacity;
             $backdrop = $(html.wrapper).css(css.wrapper).attr("id", "ui-giModal" + uniqueID);
             $footer = $(html.footer).css(css.footer);
@@ -42,7 +57,7 @@
             }
             $backdrop.append($footer);
             $("body").append($backdrop);
-            new Modal_View(uniqueID);
+            this.modal = new Modal_View(uniqueID);
         }
         $.extend(Backdrop.prototype, {
             _createFooterTemplate: function(footer) {
@@ -51,6 +66,9 @@
                 } else {
                     $footer.append(footer);
                 }
+            },
+            getModal: function() {
+                return this.modal;
             }
         });
         return Backdrop;
@@ -70,7 +88,8 @@
             },
             imageDiv: {
                 border: "1px solid #181818",
-                display: "inline-block"
+                display: "inline-block",
+                "float": "left"
             },
             infoDiv: {
                 backgroundColor: "#FFFFFF",
@@ -138,7 +157,7 @@
             that = this;
             $wrapper.append($imageDiv);
             $wrapper.append($infoDiv);
-            $("div.ui-giBackdrop").append($wrapper);
+            $("div#ui-giModal" + uniqueID).append($wrapper);
             $(window).on("resize.gi-gallery", this._adjustToViewPort);
             $("#ui-giModal" + uniqueID).on("mouseenter.gi-gallery mouseleave.gi-gallery", ".ui-giCtrl", this._hoverControls);
             $("#ui-giModal" + uniqueID).on("click.gi-gallery", ".ui-giCloseGallery", {
@@ -189,6 +208,26 @@
             },
             _hideModal: function(e) {
                 $("#ui-giModal" + e.data.uniqueID).fadeOut(200);
+            },
+            show: function($el, uniqueID) {
+                $imageContainer = $("#ui-giModal" + uniqueID + " .ui-giImageDiv");
+                var image_url = $el.attr("href") || $el.data("href");
+                this._prepareImage(image_url, $imageContainer);
+            },
+            _prepareImage: function(url, $imageContainer) {
+                doResize = this._doResize;
+                imgEl = new Image_Processor(url, function() {
+                    resized_image = doResize(this, $imageContainer);
+                    if ($imageContainer.contents().length > 0) {
+                        $imageContainer.contents().replaceWith($(resized_image));
+                    } else {
+                        $imageContainer.append($(resized_image));
+                    }
+                    $imageContainer.parent().parent().show();
+                });
+            },
+            _doResize: function(img, $imageContainer) {
+                return $(img);
             }
         });
         return Modal_View;
@@ -197,6 +236,7 @@
         var methods = {
             initialize: function(options) {
                 var $that = $(this);
+                var modal;
                 if (this.length === 0) {
                     $.error("galleryInfo initialized without DOM element");
                 }
@@ -210,17 +250,17 @@
                 }
                 return $(this).children(".ui-giItem").each(initialize);
                 function initialize() {
-                    $galleryItem = $(this);
-                    $that.on("click.gi-gallery", ".ui-giItem", _openGallery);
+                    $(this).on("click.gi-gallery", {
+                        uniqueID: time
+                    }, _openGallery);
                 }
                 function _createBackdrop(opacity, footer, time) {
-                    new Backdrop(opacity, footer, time);
+                    modal = new Backdrop(opacity, footer, time);
                 }
                 function _openGallery(e) {
                     e.preventDefault();
-                    $gallery = $("#ui-giModal" + time);
-                    if ($gallery.length) {
-                        $gallery.show();
+                    if (modal) {
+                        modal.getModal().show($(this), e.data.uniqueID);
                     }
                 }
             },

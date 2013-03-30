@@ -2,6 +2,7 @@ var semver = require('semver'),
     f = require('util').format,
     jsFiles = [
       'src/version.js',
+      'src/image_processor.js',
       'src/backdrop_view.js',
       'src/modal_view.js',
       'src/galleryInfo.js'

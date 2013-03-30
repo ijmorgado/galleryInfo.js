@@ -3,6 +3,7 @@
 	var methods = {
 		initialize: function(options){
 			var $that = $(this);
+			var modal;
 			  if (this.length === 0) {
 		        $.error('galleryInfo initialized without DOM element');
 		      }
@@ -15,17 +16,15 @@
 		      }
 		      return $(this).children('.ui-giItem').each(initialize);
 		      function initialize(){
-		      	$galleryItem = $(this);
-		      	$that.on('click.gi-gallery','.ui-giItem',_openGallery);
+		      	$(this).on('click.gi-gallery',{uniqueID:time},_openGallery);
 		      }
 		      function _createBackdrop(opacity,footer,time){
-				new Backdrop(opacity,footer,time);
+				modal = new Backdrop(opacity,footer,time);
 			  }
 			  function _openGallery(e){
 			  	e.preventDefault();
-			  	$gallery = $('#ui-giModal'+time);
-			  	if($gallery.length){
-			  		$gallery.show();
+			  	if(modal){
+			  		modal.getModal().show($(this),e.data.uniqueID);
 			  	}
 			  }
 		},

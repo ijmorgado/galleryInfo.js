@@ -14,7 +14,8 @@ var Modal_View = (function(){
 		},
 		imageDiv: {
 			border: '1px solid #181818',
-			display: 'inline-block'
+			display: 'inline-block',
+			float: 'left'
 		},
 		infoDiv: {
 			backgroundColor: '#FFFFFF',
@@ -83,7 +84,7 @@ var Modal_View = (function(){
 		that = this;
 		$wrapper.append($imageDiv);
 		$wrapper.append($infoDiv);
-		$("div.ui-giBackdrop").append($wrapper);
+		$("div#ui-giModal"+uniqueID).append($wrapper);
 		$(window).on('resize.gi-gallery',this._adjustToViewPort);
 		$('#ui-giModal'+uniqueID).on('mouseenter.gi-gallery mouseleave.gi-gallery',".ui-giCtrl",this._hoverControls);
 		$('#ui-giModal'+uniqueID).on('click.gi-gallery',".ui-giCloseGallery",{uniqueID: uniqueID},this._hideModal);
@@ -143,6 +144,26 @@ var Modal_View = (function(){
 		},
 		_hideModal: function(e){
 			$('#ui-giModal'+e.data.uniqueID).fadeOut(200);
+		},
+		show: function($el,uniqueID){
+			$imageContainer = $('#ui-giModal' + uniqueID+" .ui-giImageDiv");
+			var image_url = $el.attr("href") || $el.data("href");
+			this._prepareImage(image_url,$imageContainer);
+		},
+		_prepareImage: function(url,$imageContainer){
+			doResize = this._doResize;
+			imgEl = new Image_Processor(url,function(){
+				resized_image = doResize(this,$imageContainer);
+				if($imageContainer.contents().length > 0){
+					$imageContainer.contents().replaceWith($(resized_image));	
+				}else{
+					$imageContainer.append($(resized_image));	
+				}
+				$imageContainer.parent().parent().show();
+			});
+		},
+		_doResize: function(img,$imageContainer){
+			return $(img);
 		}
 	});
 	return Modal_View;
