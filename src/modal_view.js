@@ -10,10 +10,11 @@ var Modal_View = (function(){
 	};
 	var css = {
 		wrapperGallery: {
-			margin: '40px'
+			margin: '40px 40px 20px 40px'
 		},
 		imageDiv: {
 			border: '1px solid #181818',
+			backgroundColor: '#0A0A0A',
 			display: 'inline-block',
 			float: 'left'
 		},
@@ -92,7 +93,7 @@ var Modal_View = (function(){
 	$.extend(Modal_View.prototype,{
 		_setDimensions: function(){
 			css.wrapperGallery.width = $(window).width()-80;
-			css.wrapperGallery.height = $(window).height()-150;
+			css.wrapperGallery.height = $(window).height()-130;
 			css.imageDiv.width = css.wrapperGallery.width - 300;
 			css.imageDiv.height = css.wrapperGallery.height;
 			css.infoDiv.height = css.wrapperGallery.height;
@@ -112,6 +113,8 @@ var Modal_View = (function(){
 			$("div.ui-giInfoDiv").css(css.infoDiv);
 			$("div.ui-giCtrlleft").css(css.leftCtrl);
 			$("div.ui-giCtrlRight").css(css.rightCtrl);
+			$("div.ui-giCtrlleft span").css(css.arrowLeft);
+			$("div.ui-giCtrlRight span").css(css.arrowRight);
 		},
 		_createControls: function(){
 			$spanArrowLeft = $(document.createElement('span')).css(css.arrowLeft);
@@ -163,7 +166,22 @@ var Modal_View = (function(){
 			});
 		},
 		_doResize: function(img,$imageContainer){
-			return $(img);
+			$img = $(img), maxWidth = $imageContainer.width() -2,
+			maxHeight = $imageContainer.height() -2,
+			originalWidth = img.width, originalHeight = img.height,
+			cssImg = {};
+			if((originalWidth <= maxWidth) && (originalHeight <= maxHeight)){
+				cssImg = {
+					marginLeft: (maxWidth - originalWidth)/2,
+					marginRight: (maxWidth - originalWidth)/2,
+					marginTop: (maxHeight - originalHeight)/2,
+					marginBottom: (maxHeight - originalHeight)/2
+				};
+			}else{
+
+			}
+			$img.css(cssImg);
+			return $img;
 		}
 	});
 	return Modal_View;
